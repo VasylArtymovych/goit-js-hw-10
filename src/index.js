@@ -1,7 +1,11 @@
 import './css/styles.css';
-import {fetchCountries} from './fetchCountries'
+import {fetchCountries} from './js/fetchCountries'
+import {countryMarkup} from './js/countryMurkup.js'
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import templateFunction from './templates/countries.hbs'
 var debounce = require('lodash.debounce');
+
+
 
 const refs ={
     input: document.querySelector('#search-box'),
@@ -14,42 +18,48 @@ refs.input.addEventListener('input', debounce(searchHandler, DEBOUNCE_DELAY));
 
 function searchHandler(evt){
     const country = (evt.target.value).trim();
-    
+    clearMurkup();
+
     if (country){
         fetchCountries(country).then(countries => {
-            if (countries.length === 1){
-                console.log(countries);
-                appendCountriesList(countries);
-                countryMarkup(countries[0]);
+            
+            if (countries.length === 1){              
+                appendCountries(countries);
+                appendCountryInfo(countries);
+
             }else if (countries.length >=2 &&  countries.length <= 10){
-                console.log(countries);
-                appendCountriesList(countries)
-            }else {
-                Notify.failure("Too many matches found. Please enter a more specific name.");
+                appendCountries(countries);
+                
+
+            }else if (countries.length > 10){
+                Notify.warning("Too many matches found. Please enter a more specific name.");
             }
-           
+        })
+        .catch(err => {
+            console.dir(err);
+            Notify.failure("Oops, there is no country with that name");
         })
     }
     
 }
 
 
-function appendCountriesList(countries){
-    const markup = countries.map(countriesListMarkup).join('');
-    refs.list.insertAdjacentHTML('beforeend', markup);
+function appendCountries(countries){
+    refs.list.insertAdjacentHTML('beforeend', templateFunction(countries));
 }
 
-function countriesListMarkup({name, flags}){
-    return `<li class="list-item">
-    <img src="${flags.svg}" class="item_icon" width="30px" height="20px">
-    ${name.official}
-  </li>`
+function appendCountryInfo(countries){
+    refs.text.insertAdjacentHTML('beforeend', countryMarkup(countries[0]));
 }
 
-function countryMarkup({ capital, population, languages}){
-    const markup = `<p class="text-info"><b>Capital:</b>${capital}</p>
-    <p class="text-info"><b>Population:</b>${population}</p>
-    <p class="text-info"><b>Languages:</b>${languages}</p>`
-    refs.text.insertAdjacentHTML('beforeend', markup);
+function clearMurkup(){
+    refs.list.innerHTML = '';
+    refs.text.innerHTML = '';
 }
 
+
+Notify.init({
+    warning: {
+        background: '#6291EF',
+    },
+})
