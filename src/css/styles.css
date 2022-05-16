@@ -7,25 +7,52 @@ body {
     Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #fafafa;
-  color: #212121;
+  height: 100vh;
+  background: linear-gradient(45deg, #9c2edb, #33a0d3, rgb(206, 129, 30));
+ 
+  background-size: 400% 400%;
+  animation: gradient 10s ease infinite;
   line-height: 1.5;
+   color: #212121;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 100%;
+  }
+  25% {
+    background-position: 50% 50%;
+  }
+  50% {
+    background-position: 100% 20%;
+  }
+  100% {
+    background-position: 0% 100%;
+  }
 }
 
 #search-box {
   font: inherit;
   padding: 8px;
   max-width: 320px;
-  margin-bottom: 16px;
+  margin: 20px 0 0 20px;
+  box-shadow: 0 0 4px #76038d, 0 0 4px #400bbd;
+  border: 1px solid #400bbd;
 }
-
+#search-box::placeholder{
+  font-family: Arial, Helvetica, sans-serif;
+}
 .country-list {
   list-style: none;
+  
 
 }
 .list-item {
   font-size: 20px;
   font-weight: 500;
+}
+.country-info {
+  margin-left: 20px;
 }
 .country-info b {
   margin-right: 10px;
